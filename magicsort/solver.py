@@ -33,7 +33,7 @@ def parse_initial_state(raw: str, cap: int = CAP) -> Tuple[State, Dict[int, str]
     초기 상태 파싱.
     
     반환: (state, restricted_put, locked_out, tube_caps, mode)
-    mode: "full" 또는 "partial"
+    mode: "full" 또는 "partial" ("(부분)" 혹은 "partial" 헤더로 설정)
     """
     if not raw.strip():
         raise ValueError("initial state text is empty")
@@ -46,9 +46,11 @@ def parse_initial_state(raw: str, cap: int = CAP) -> Tuple[State, Dict[int, str]
 
     # 모드 헤더 처리
     mode = "full"
-    if lines and lines[0] == "(부분)":
-        mode = "partial"
-        lines = lines[1:]
+    if lines:
+        header = lines[0].strip().lower()
+        if header in ("(부분)", "partial"):
+            mode = "partial"
+            lines = lines[1:]
 
     restricted: Dict[int, str] = {}
     tubes: List[Tuple[str, ...]] = []
@@ -777,20 +779,16 @@ def analyze_first_moves(
 
 INITIAL_STATE_RAW = """
 
-e2r?
-yoyp
-m
-p2w2
-r?y?
-gro
+w2ls
+e2v
+ryo
+x
+
+vewl
+rsoy
 -
-s2?
--
-wb
-sb2g
-m??m
-b??m
-eg2
+wsor
+osyl
 
 """.strip()
 
@@ -948,4 +946,3 @@ if __name__ == "__main__":
 
     except BrokenPipeError:
         pass
-
